@@ -1,8 +1,8 @@
-const CALC_TYPE = {
-  INIT: "INIT",
-  FIXED: "FIXED",
-  DYNAMIC: "DYNAMIC",
-};
+// const CALC_TYPE = {
+//   INIT: "INIT",
+//   FIXED: "FIXED",
+//   DYNAMIC: "DYNAMIC",
+// };
 const DIRECTION_TYPE = {
   FRONT: "FRONT", // 向上滚动
   BEHIND: "BEHIND", // 向下滚动
@@ -18,6 +18,7 @@ export default class Virtual {
 
     this.offset = 0; // 初始化滚动条的offsetTop值
     this.direction = null;
+    // this.sizes = new Map();
     this.range = Object.create(null);
     if (param) {
       this.checkRange(0, param.keeps - 1);
@@ -113,7 +114,7 @@ export default class Virtual {
   /**
    * @param {number} start
    * @param {number} end
-   * 修改range对象值并计算padFront与padBehind对应上padding与下padding
+   * 修复range对象值并计算padFront与padBehind对应上padding与下padding
    */
   updateRange(start, end) {
     this.range = {
@@ -149,6 +150,10 @@ export default class Virtual {
    getPadBehind (end) {
     const lastIndex = this.getLastIndex()
 
+    // if (this.isFixedType()) {
+    //   return (lastIndex - end) * this.fixedSizeValue
+    // }
+
     if (this.lastCalcIndex === lastIndex) {
       return this.getIndexOffset(lastIndex) - this.getIndexOffset(end)
     } else {
@@ -156,9 +161,9 @@ export default class Virtual {
     }
   }
 
-  isFixedType() {
-    return this.calcType === CALC_TYPE.FIXED;
-  }
+  // isFixedType() {
+  //   return this.calcType === CALC_TYPE.FIXED;
+  // }
   /**
    * 通过下标计算出偏移量offset
    * @param {number} givenIndex
@@ -169,8 +174,13 @@ export default class Virtual {
       return 0;
     }
     let offset = 0;
+    // let indexSize = 0;
     for (let index = 0; index < givenIndex; index++) {
-      offset = this.getEstimateSize();
+      // indexSize = this.sizes.get(this.param.uniqueIds[index]);
+      // offset =
+      //   offset +
+      //   (typeof indexSize === "number" ? indexSize : this.getEstimateSize());
+      offset = offset +this.getEstimateSize();
     }
 
     this.lastCalcIndex = Math.max(this.lastCalcIndex, givenIndex - 1);
@@ -179,6 +189,9 @@ export default class Virtual {
   }
   // 获取高度
   getEstimateSize() {
+    // return this.isFixedType()
+    //   ? this.fixedSizeValue
+    //   : this.firstRangeAverageSize || this.param.estimateSize;
     return this.param.estimateSize;
   }
   // 销毁
