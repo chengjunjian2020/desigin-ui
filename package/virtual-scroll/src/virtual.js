@@ -18,7 +18,6 @@ export default class Virtual {
 
     this.offset = 0; // 初始化滚动条的offsetTop值
     this.direction = null;
-    this.sizes = new Map();
     this.range = Object.create(null);
     if (param) {
       this.checkRange(0, param.keeps - 1);
@@ -42,8 +41,6 @@ export default class Virtual {
     if (overs > start) {
       return
     }
-    console.log(overs)
-    console.log(this.param.buffer)
     const starts = Math.max(overs - buffer, 0);
     this.checkRange(starts, this.getEndByStart(starts));
   }
@@ -116,7 +113,7 @@ export default class Virtual {
   /**
    * @param {number} start
    * @param {number} end
-   * 修复range对象值并计算padFront与padBehind对应上padding与下padding
+   * 修改range对象值并计算padFront与padBehind对应上padding与下padding
    */
   updateRange(start, end) {
     this.range = {
@@ -172,12 +169,8 @@ export default class Virtual {
       return 0;
     }
     let offset = 0;
-    let indexSize = 0;
     for (let index = 0; index < givenIndex; index++) {
-      indexSize = this.sizes.get(this.param.uniqueIds[index]);
-      offset =
-        offset +
-        (typeof indexSize === "number" ? indexSize : this.getEstimateSize());
+      offset = this.getEstimateSize();
     }
 
     this.lastCalcIndex = Math.max(this.lastCalcIndex, givenIndex - 1);

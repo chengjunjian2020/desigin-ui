@@ -63,10 +63,10 @@ export default {
     initVirtual() {
       this.virtual = new Virtual(
         {
-          keeps: this.preloadSize,
-          uniqueIds: this.getUniqueIds(),
-          buffer: Math.round(this.preloadSize / 3),
-          estimateSize: this.itemSize,
+          keeps: this.preloadSize, //渲染多少条数据
+          uniqueIds: this.getUniqueIds(), // 数据源
+          buffer: Math.round(this.preloadSize / 3), // 缓存数值 例如这一次滚动后所得下标不足时不做计算处理，向上滚动利用该数值做滚动优化
+          estimateSize: this.itemSize, // 每行高度
         },
         this.handlerUpdate
       );
