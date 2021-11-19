@@ -121,7 +121,6 @@ export default {
       if (offset < 0 || (offset + clientSize > scrollSize) || !scrollSize) { //没有复现
         return
       }
-      console.log("--->")
       this.virtual.handleScroll(offset);
     },
 

@@ -18,7 +18,6 @@ export default class Virtual {
 
     this.offset = 0; // 初始化滚动条的offsetTop值
     this.direction = null;
-    this.fixedSizeValue = 0;
     this.sizes = new Map();
     this.range = Object.create(null);
     if (param) {
@@ -27,14 +26,13 @@ export default class Virtual {
   }
   //触发滚动操作
   handleScroll(offset) {
-    this.direction =
-      offset < this.offset ? DIRECTION_TYPE.FRONT : DIRECTION_TYPE.BEHIND;
-    this.offset = offset;
+    this.direction = offset < this.offset ? DIRECTION_TYPE.FRONT : DIRECTION_TYPE.BEHIND
+    this.offset = offset
 
     if (this.direction === DIRECTION_TYPE.FRONT) {
-      this.handleFront();
+      this.handleFront()
     } else if (this.direction === DIRECTION_TYPE.BEHIND) {
-      this.handleBehind();
+      this.handleBehind()
     }
   }
   handleFront() {
@@ -42,10 +40,12 @@ export default class Virtual {
     let { start } = this.range;
     const { buffer } = this.param;
     if (overs > start) {
-      return;
+      return
     }
+    console.log(overs)
+    console.log(this.param.buffer)
     const starts = Math.max(overs - buffer, 0);
-    this.checkRange(starts, this.getEndByStart(start));
+    this.checkRange(starts, this.getEndByStart(starts));
   }
   handleBehind() {
     const overs = this.getScrollOvers();
@@ -74,25 +74,26 @@ export default class Virtual {
   }
   getScrollOvers() {
     let { offset } = this;
-    if (this.isFixedType()) {
-      return Math.floor(offset / this.fixedSizeValue);
+    if (offset <= 0) {
+      return 0
     }
-    let low = 0;
-    let middle = 0;
-    let middleOffset = 0;
-    let high = this.param.uniqueIds.length;
+    let low = 0
+    let middle = 0
+    let middleOffset = 0
+    let high = this.param.uniqueIds.length
     while (low <= high) {
-      middle = low + Math.floor((high - low) / 2);
-      middleOffset = this.getIndexOffset(middle);
+      middle = low + Math.floor((high - low) / 2)
+      middleOffset = this.getIndexOffset(middle)
+
       if (middleOffset === offset) {
-        return middle;
+        return middle
       } else if (middleOffset < offset) {
-        low = middle + 1;
+        low = middle + 1
       } else if (middleOffset > offset) {
-        high = middle - 1;
+        high = middle - 1
       }
     }
-    return low > 0 ? --low : 0;
+    return low > 0 ? --low : 0
   }
   //设置start与end的逻辑
   checkRange(start, end) {
@@ -140,27 +141,21 @@ export default class Virtual {
    * @param {number} start
    * @returns
    */
-  getPadFront(start) {
-    if (this.isFixedType()) {
-      return this.fixedSizeValue * this.range.start;
-    } else {
-      return this.getIndexOffset(start);
-    }
+   getPadFront (start) {
+      return this.getIndexOffset(start)
   }
   /**
    * 获取下padding值
    * @param {number} end
    * @returns
    */
-  getPadBehind(end) {
-    const lastIndex = this.getLastIndex();
-    if (this.isFixedType()) {
-      return (lastIndex - end) * this.fixedSizeValue;
-    }
+   getPadBehind (end) {
+    const lastIndex = this.getLastIndex()
+
     if (this.lastCalcIndex === lastIndex) {
-      return this.getIndexOffset(lastIndex) - this.getIndexOffset(end);
+      return this.getIndexOffset(lastIndex) - this.getIndexOffset(end)
     } else {
-      return (lastIndex - end) * this.getEstimateSize();
+      return (lastIndex - end) * this.getEstimateSize()
     }
   }
 
@@ -191,9 +186,7 @@ export default class Virtual {
   }
   // 获取高度
   getEstimateSize() {
-    return this.isFixedType()
-      ? this.fixedSizeValue
-      : this.firstRangeAverageSize || this.param.estimateSize;
+    return this.param.estimateSize;
   }
   // 销毁
   destroy() {

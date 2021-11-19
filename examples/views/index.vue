@@ -5,6 +5,7 @@
             :data-source="lists"
             data-key="id"
             ref-name="virtual"
+            :itemSize="21"
         >
             <template v-slot:model="{ source }">
                 <Button
@@ -30,7 +31,7 @@ export default {
         VirtualScroll,
     },
     created() {
-        this.initwrap(200);
+        this.initwrap(20000);
     },
     methods: {
         initwrap(rows) {
