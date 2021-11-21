@@ -35,6 +35,12 @@ export default class Virtual {
       this.handleBehind()
     }
   }
+  isFront(){
+    return this.direction === DIRECTION_TYPE.FRONT;
+  }
+  isBehind () {
+    return this.direction === DIRECTION_TYPE.BEHIND
+  }
   handleFront() {
     const overs = this.getScrollOvers();
     let { start } = this.range;

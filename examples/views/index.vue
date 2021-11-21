@@ -6,6 +6,7 @@
             data-key="id"
             ref-name="virtual"
             :itemSize="21"
+            :footer-size="30"
         >
             <template v-slot:model="{ source }">
                 <Button
@@ -15,6 +16,8 @@
                     >{{ `# - ${source.id}` }}</Button
                 >
             </template>
+            <div slot="header">页眉</div>
+            <div slot="footer">页脚</div>
         </VirtualScroll>
     </div>
 </template>
@@ -31,7 +34,7 @@ export default {
         VirtualScroll,
     },
     created() {
-        this.initwrap(20000);
+        this.initwrap(100);
     },
     methods: {
         initwrap(rows) {

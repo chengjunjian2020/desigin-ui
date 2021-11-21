@@ -22,7 +22,8 @@ export default {
       type: String,
       default: "div",
     },
-    renderTag: { //每个item的标签
+    renderTag: {
+      //每个item的标签
       type: String,
       default: "div",
     },
@@ -39,25 +40,36 @@ export default {
       type: Number,
       default: 30,
     },
+    footerSize: {
+      type: Number,
+      default: 0,
+    },
   },
   data() {
     return {
       virtualInfo: {},
+      observerInstance: null,
+      // isFirstObserver: true,
     };
   },
-  watch:{
-    'dataSource.length'(){
+  watch: {
+    "dataSource.length"() {
       this.virtual.updateParam();
       this.virtual.handleDataSourcesChange();
-    }
+    },
   },
-  computed:{
-    className(){
-      return this.wrapClass ? [this.wrapClass, 'sh-virtual-content-wrap']:['sh-virtual-content-wrap'];
-    }
+  computed: {
+    className() {
+      return this.wrapClass
+        ? [this.wrapClass, "sh-virtual-content-wrap"]
+        : ["sh-virtual-content-wrap"];
+    },
   },
   created() {
     this.initVirtual();
+  },
+  mounted() {
+    this.initObserver();
   },
   methods: {
     initVirtual() {
@@ -70,6 +82,44 @@ export default {
         },
         this.handlerUpdate
       );
+    },
+    initObserver() {
+      this.observerInstance = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((val) => {
+            //避免有的时候一渲染页面就会触发，模拟只有滚动时候才发生
+            // if(this.isFirstObserver){
+            //   setTimeout(() =>{
+            //     this.isFirstObserver = false;
+            //   },800)
+            //   return;
+            // }
+            const attributes = val.target.attributes;
+            // isIntersecting标记元素是否进入可视区域
+            if(val.isIntersecting && attributes){
+              if(attributes && attributes['name'] === 'virtual-header'){
+                this.$emit("on-header");
+              }
+              if(attributes && attributes['name'] === 'virtual-footer'){
+                this.$emit("on-footer");
+              }
+            }
+            console.log(val);
+          });
+        },
+        {
+          root: null, // 默认值为null，也就是视口区域,表示监听的可视区域为整个视口，也就是浏览器的可视区域
+          threshold: [1], // 属性决定了什么时候触发回调函数。默认为[0] 比如，[0, 0.25, 0.5, 0.75, 1]就表示当目标元素 0%、25%、50%、75%、100% 可见时，会触发回调函数。
+          rootMargin: "0px", // 定义根元素的margin,用来扩展可视区的范围,或者可以这样理解，root元素，多了一个margin属性，如果没有这个margin属性，ele元素只有与root元素开始交叉时才会触发可视性的变化，而这个rootMargin属性的话，就是当ele元素与root元素的外边距交叉时，就会触发ele元素的可视性变化。
+        }
+      );
+      let ref = this.$refs;
+      if (ref["virtual-header"]) {
+        this.observerInstance.observe(ref["virtual-header"]);
+      }
+      if (ref["virtual-footer"]) {
+        this.observerInstance.observe(ref["virtual-footer"]);
+      }
     },
     getUniqueIds() {
       return this.dataSource.map((data) => data[this.dataKey]);
@@ -118,28 +168,39 @@ export default {
       const offset = this.getOffset(event.target); //获取滚动的高度
       const clientSize = this.getClientSize(event.target); //
       const scrollSize = this.getScrollSize(event.target);
-      if (offset < 0 || (offset + clientSize > scrollSize) || !scrollSize) { //没有复现
-        return
+      if (offset < 0 || offset + clientSize > scrollSize || !scrollSize) {
+        //没有复现
+        return;
       }
       this.virtual.handleScroll(offset);
+      this.emitScrollEvent(event, offset);
     },
-
-    getOffset(target){
+    emitScrollEvent(event, offset) {
+      this.$emit("on-scroll", event, this.virtual.getVirtualInfo());
+      if (this.virtual.isFront() && this.dataSource.length) {
+        this.$emit("on-top", offset);
+      }
+      if (this.virtual.isBehind() && this.dataSource.length) {
+        this.$emit("on-bottom", offset);
+      }
+    },
+    getOffset(target) {
       const el = target || this.$refs[this.refName];
       return el.scrollTop || 0;
     },
 
-    getClientSize(target){
-      const el = target || this.$refs[this.refName]
-      return el ? el.clientHeight : 0
+    getClientSize(target) {
+      const el = target || this.$refs[this.refName];
+      return el ? el.clientHeight : 0;
     },
-    getScrollSize(target){
-      const el = target || this.$refs[this.refName]
-      return el.scrollHeight || 0
-    }
+    getScrollSize(target) {
+      const el = target || this.$refs[this.refName];
+      return el.scrollHeight || 0;
+    },
   },
   render(h) {
-    const { model } = this.$scopedSlots;
+    const { model, footer = () => {}, header = () => {} } = this.$scopedSlots;
+    console.log(footer);
     if (!model) {
       console.error("请传入渲染组件");
       return;
@@ -167,6 +228,17 @@ export default {
       },
       [
         h(
+          "div",
+          {
+            ref: "virtual-header",
+            attrs: {
+              name: 'virtual-header'
+            },
+          },
+          
+          header()
+        ),
+        h(
           wrapTag,
           {
             style: wrapStyle,
@@ -174,11 +246,21 @@ export default {
           },
           children
         ),
+        h(
+          "div",
+          {
+            ref: "virtual-footer",
+            attrs: {
+              name: 'virtual-footer'
+            },
+          },
+          footer()
+        ),
       ]
     );
   },
-  beforeDestroy(){
-    this.virtual.destroy()
-  }
-
+  beforeDestroy() {
+    this.virtual.destroy();
+    this.observerInstance.disconnect();
+  },
 };
