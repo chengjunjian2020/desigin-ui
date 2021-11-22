@@ -49,7 +49,7 @@ export default {
     return {
       virtualInfo: {},
       observerInstance: null,
-      // isFirstObserver: true,
+      isFirstObserver: true,
     };
   },
   watch: {
@@ -88,12 +88,13 @@ export default {
         (entries) => {
           entries.forEach((val) => {
             //避免有的时候一渲染页面就会触发，模拟只有滚动时候才发生
-            // if(this.isFirstObserver){
-            //   setTimeout(() =>{
-            //     this.isFirstObserver = false;
-            //   },800)
-            //   return;
-            // }
+            console.log(this.isFirstObserver)
+            if(this.isFirstObserver){
+              setTimeout(() =>{
+                this.isFirstObserver = false;
+              },800)
+              return;
+            }
             const attributes = val.target.attributes;
             // isIntersecting标记元素是否进入可视区域
             if(val.isIntersecting && attributes){
