@@ -25,7 +25,7 @@ export default {
           hoverStop: true, // 是否启用鼠标hover控制
           direction: "bottom", // 方向 top left bottom right
           openTouch: false, // 是否开启touch滑动
-          waitTime: 100, // 每次停止等待时间
+          waitTime: 10, // 每次停止等待时间
           autoPlay: true, // 是否开启自动滚动
           switchOffset: 10, // 手动切换时的的长度
         };
@@ -85,7 +85,7 @@ export default {
       this.times = setInterval(() => {
         yPos = Math.min(scrollHeight - clientSize, yPos + step);
         if (Math.abs(yPos) === scrollHeight - clientSize) {
-          yPos = clientSize;
+          yPos = scrollHeight / 2 - clientSize;
         }
         switch (direction) {
           case "top":
