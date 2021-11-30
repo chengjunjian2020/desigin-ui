@@ -1,66 +1,46 @@
 <template>
-    <div class="infinity-sroll-container">
-        <VirtualScroll
-            style="height: 400px; box-shadow: 2px 2px 20px #332e2d"
-            :data-source="lists"
-            data-key="id"
-            ref-name="virtual"
-            :itemSize="21"
-            :footer-size="30"
-        >
-            <template v-slot:model="{ source }">
-                <Button
-                    size="small"
-                    style="width: 100%"
-                    @click="clickItem(source)"
-                    >{{ `# - ${source.id}` }}</Button
-                >
-            </template>
-            <div slot="header">页眉</div>
-            <div slot="footer">页脚</div>
-        </VirtualScroll>
+    <div class="wrapper">
+        <RotationScroll>
+            <ul>
+                <li v-for="item in list" :key="item">
+                    {{ item }}
+                </li>
+            </ul>
+        </RotationScroll>
     </div>
 </template>
 
 <script>
-import { VirtualScroll } from "desigin-ui/index";
+import { RotationScroll } from "desigin-ui/index";
 export default {
     data() {
         return {
-            lists: [],
+            list: [],
         };
     },
     components: {
-        VirtualScroll,
+        RotationScroll,
     },
     created() {
-        this.initwrap(100);
+        this._initList();
     },
     methods: {
-        initwrap(rows) {
-            const item = {};
-            for (let v = 0; v < 10; v++) {
-                item[`v${v}`] = `# ${v}`;
-            }
-            let i = 0;
-            while (i < rows) {
-                i++;
-                item.id = i;
-                // 浅拷贝啊 我去。。
-                this.lists.push({
-                    ...item,
-                });
+        _initList() {
+            for (let i = 0; i < 20; i++) {
+                this.list.push(`自动轮播第${i}条`);
             }
         },
-        clickItem(item){
-            console.log(item);
-        }
     },
 };
-</script>                         
+</script>
 
-<style lang="less">
-.sh-virtual{
-    overflow: auto;
+<style lang="less" scoped>
+.wrapper {
+    width: 300px;
+    height: 222px;
+    overflow: hidden;
+    ul li {
+        list-style: none;
+    }
 }
 </style>
