@@ -26,7 +26,7 @@ export default {
     },
     methods: {
         _initList() {
-            for (let i = 0; i < 30; i++) {
+            for (let i = 0; i < 60; i++) {
                 this.list.push(`自动轮播第${i}条`);
             }
         },

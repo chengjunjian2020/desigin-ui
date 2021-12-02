@@ -21,7 +21,7 @@ export default {
       type: Object,
       default: () => {
         return {
-          step: 1, // 步长每次滚动多少px,
+          step: 0.4, // 步长每次滚动多少px,
           hoverStop: true, // 是否启用鼠标hover控制
           direction: "bottom", // 方向 top left bottom right
           openTouch: false, // 是否开启touch滑动
@@ -67,9 +67,6 @@ export default {
         if (clientSize >= scrollHeight || !this.scrollOption.autoPlay) {
           return;
         }
-        this._clear();
-
-        console.log("执行");
         let ypos = this.yPos;
         this.loopScroll(ypos);
       });
@@ -83,48 +80,46 @@ export default {
       return el ? el.scrollHeight : 0;
     },
     loopScroll(yPos) {
+      // eslint-disable-next-line no-unused-vars
       const { step, direction, waitTime } = this.scrollOption;
       const scrollHeight = this.getScrollHeight();
       const clientSize = this.getClientSize();
-      this.times = requestAnimationFrame(() => {
-        console.log("requestAnimationFrame");
+      this._clear();
+      this.reqFrame = requestAnimationFrame(() => {
         yPos = Math.min(scrollHeight - clientSize, yPos + step);
-        if (Math.abs(yPos) === scrollHeight - clientSize) {
-          yPos = scrollHeight / 2 - clientSize;
-        }
+
         switch (direction) {
           case "top":
             this.yPos = yPos;
             break;
           case "bottom":
-            this.yPos = yPos * -1;
+            if (Math.abs(yPos) === scrollHeight - clientSize) {
+              yPos = scrollHeight / 2 - clientSize;
+            }
             break;
           case "left":
             break;
           case "right":
             break;
         }
-        setTimeout(() => {
-          this.loopScroll(yPos);
-        }, waitTime);
+        this.yPos = yPos * -1;
+
+        this.loopScroll(yPos);
       });
-      // this.loopScroll(yPos);
-      //   this.times = setTimeout(() => {
-      //     this.loopScroll(yPos);
-      //   }, waitTime);
-      // });
     },
     /**
      * 需要处理的vnode
      * @param {*} childrenx
      */
     setChildVnode(children) {
-      let { preloadSize, yPos } = this;
-      const scrollHeight = this.getScrollHeight();
-      const clientSize = this.getClientSize();
-      if (preloadSize >= scrollHeight - clientSize - Math.abs(yPos)) {
-        const leng = this.list.length;
-        const vNodeList = children[0].children;
+      // let { preloadSize, yPos, list } = this;
+      // let { direction } = this.scrollOption;
+      // const scrollHeight = this.getScrollHeight();
+      // const clientSize = this.getClientSize();
+      const { list } = this;
+      const vNodeList = children[0].children;
+      if (list.length === vNodeList.length) {
+        const leng = list.length;
         children[0].children.push(...vNodeList);
         if (Math.floor(children[0].children.length / 2) >= leng) {
           children[0].children.splice(0, leng - 1);
@@ -132,7 +127,6 @@ export default {
       }
     },
     _clear() {
-      this.times && clearTimeout(this.times);
       this.reqFrame && cancelAnimationFrame(this.reqFrame);
     },
   },
