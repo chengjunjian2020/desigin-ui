@@ -37,6 +37,7 @@ export default {
       xPos: 0,
       yPos: 0,
       times: null,
+      reqFrame: null,
     };
   },
   watch: {
@@ -66,7 +67,11 @@ export default {
         if (clientSize >= scrollHeight || !this.scrollOption.autoPlay) {
           return;
         }
-        this.computePos();
+        this._clear();
+
+        console.log("执行");
+        let ypos = this.yPos;
+        this.loopScroll(ypos);
       });
     },
     getClientSize() {
@@ -77,12 +82,12 @@ export default {
       const el = this.$refs[this.refName];
       return el ? el.scrollHeight : 0;
     },
-    computePos() {
+    loopScroll(yPos) {
+      const { step, direction, waitTime } = this.scrollOption;
       const scrollHeight = this.getScrollHeight();
       const clientSize = this.getClientSize();
-      const { step, direction, waitTime } = this.scrollOption;
-      let yPos = this.yPos;
-      this.times = setInterval(() => {
+      this.times = requestAnimationFrame(() => {
+        console.log("requestAnimationFrame");
         yPos = Math.min(scrollHeight - clientSize, yPos + step);
         if (Math.abs(yPos) === scrollHeight - clientSize) {
           yPos = scrollHeight / 2 - clientSize;
@@ -99,7 +104,15 @@ export default {
           case "right":
             break;
         }
-      }, waitTime);
+        setTimeout(() => {
+          this.loopScroll(yPos);
+        }, waitTime);
+      });
+      // this.loopScroll(yPos);
+      //   this.times = setTimeout(() => {
+      //     this.loopScroll(yPos);
+      //   }, waitTime);
+      // });
     },
     /**
      * 需要处理的vnode
@@ -118,8 +131,14 @@ export default {
         }
       }
     },
+    _clear() {
+      this.times && clearTimeout(this.times);
+      this.reqFrame && cancelAnimationFrame(this.reqFrame);
+    },
   },
-
+  beforeDestroy() {
+    this._clear();
+  },
   render(h) {
     const { infiniteStyle, refName } = this;
     const scorllContent = this.$slots.default;

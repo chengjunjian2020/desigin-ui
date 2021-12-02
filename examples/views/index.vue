@@ -2,7 +2,7 @@
     <div class="wrapper">
         <RotationScroll>
             <ul>
-                <li v-for="item in list" :key="item">
+                <li v-for="item in list" :key="item.id">
                     {{ item }}
                 </li>
             </ul>
