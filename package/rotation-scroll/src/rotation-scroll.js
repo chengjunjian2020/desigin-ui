@@ -11,7 +11,14 @@ export default {
       type: String,
       default: "rotationScroll",
     },
-
+    wrapperClass: {
+      type: String,
+      default: "",
+    },
+    scrollClass: {
+      type: String,
+      default: "",
+    },
     preloadSize: {
       // 距离末尾多少px开启预加载
       type: Number,
@@ -23,7 +30,7 @@ export default {
         return {
           step: 0.4, // 步长每次滚动多少px,
           hoverStop: true, // 是否启用鼠标hover控制
-          direction: "bottom", // 方向 top left bottom right
+          direction: "top", // 方向 top left bottom right
           openTouch: false, // 是否开启touch滑动
           waitTime: 10, // 每次停止等待时间
           autoPlay: true, // 是否开启自动滚动
@@ -39,14 +46,6 @@ export default {
       times: null,
       reqFrame: null,
     };
-  },
-  watch: {
-    list: {
-      deep: true,
-      handler() {
-        this.initScroll();
-      },
-    },
   },
   created() {
     this.initScroll();
@@ -90,19 +89,23 @@ export default {
 
         switch (direction) {
           case "top":
-            this.yPos = yPos;
+            if (Math.abs(yPos) === scrollHeight - clientSize) {
+              yPos = scrollHeight / 2 - clientSize;
+            }
+            this.yPos = -yPos;
             break;
           case "bottom":
             if (Math.abs(yPos) === scrollHeight - clientSize) {
               yPos = scrollHeight / 2 - clientSize;
             }
+            this.yPos = yPos * -1;
+
             break;
           case "left":
             break;
           case "right":
             break;
         }
-        this.yPos = yPos * -1;
 
         this.loopScroll(yPos);
       });
@@ -119,11 +122,7 @@ export default {
       const { list } = this;
       const vNodeList = children[0].children;
       if (list.length === vNodeList.length) {
-        const leng = list.length;
         children[0].children.push(...vNodeList);
-        if (Math.floor(children[0].children.length / 2) >= leng) {
-          children[0].children.splice(0, leng - 1);
-        }
       }
     },
     _clear() {
@@ -134,7 +133,7 @@ export default {
     this._clear();
   },
   render(h) {
-    const { infiniteStyle, refName } = this;
+    const { infiniteStyle, refName, wrapperClass, scrollClass } = this;
     const scorllContent = this.$slots.default;
     if (!scorllContent && scorllContent.length > 0) {
       console.error("请传入渲染组件");
@@ -147,7 +146,7 @@ export default {
       {
         style: infiniteStyle,
         ref: refName,
-        class: "rotation-scroll",
+        class: `rotation-scroll ${wrapperClass}`,
       },
       [
         h(
@@ -157,6 +156,7 @@ export default {
             style: {
               color: "red",
             },
+            class: scrollClass,
           },
           scorllContent
         ),

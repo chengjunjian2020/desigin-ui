@@ -26,27 +26,28 @@ export default class Virtual {
   }
   //触发滚动操作
   handleScroll(offset) {
-    this.direction = offset < this.offset ? DIRECTION_TYPE.FRONT : DIRECTION_TYPE.BEHIND
-    this.offset = offset
+    this.direction =
+      offset < this.offset ? DIRECTION_TYPE.FRONT : DIRECTION_TYPE.BEHIND;
+    this.offset = offset;
 
     if (this.direction === DIRECTION_TYPE.FRONT) {
-      this.handleFront()
+      this.handleFront();
     } else if (this.direction === DIRECTION_TYPE.BEHIND) {
-      this.handleBehind()
+      this.handleBehind();
     }
   }
-  isFront(){
+  isFront() {
     return this.direction === DIRECTION_TYPE.FRONT;
   }
-  isBehind () {
-    return this.direction === DIRECTION_TYPE.BEHIND
+  isBehind() {
+    return this.direction === DIRECTION_TYPE.BEHIND;
   }
   handleFront() {
     const overs = this.getScrollOvers();
     let { start } = this.range;
     const { buffer } = this.param;
     if (overs > start) {
-      return
+      return;
     }
     const starts = Math.max(overs - buffer, 0);
     this.checkRange(starts, this.getEndByStart(starts));
@@ -79,25 +80,25 @@ export default class Virtual {
   getScrollOvers() {
     let { offset } = this;
     if (offset <= 0) {
-      return 0
+      return 0;
     }
-    let low = 0
-    let middle = 0
-    let middleOffset = 0
-    let high = this.param.uniqueIds.length
+    let low = 0;
+    let middle = 0;
+    let middleOffset = 0;
+    let high = this.param.uniqueIds.length;
     while (low <= high) {
-      middle = low + Math.floor((high - low) / 2)
-      middleOffset = this.getIndexOffset(middle)
+      middle = low + Math.floor((high - low) / 2);
+      middleOffset = this.getIndexOffset(middle);
 
       if (middleOffset === offset) {
-        return middle
+        return middle;
       } else if (middleOffset < offset) {
-        low = middle + 1
+        low = middle + 1;
       } else if (middleOffset > offset) {
-        high = middle - 1
+        high = middle - 1;
       }
     }
-    return low > 0 ? --low : 0
+    return low > 0 ? --low : 0;
   }
   //设置start与end的逻辑
   checkRange(start, end) {
@@ -145,25 +146,25 @@ export default class Virtual {
    * @param {number} start
    * @returns
    */
-   getPadFront (start) {
-      return this.getIndexOffset(start)
+  getPadFront(start) {
+    return this.getIndexOffset(start);
   }
   /**
    * 获取下padding值
    * @param {number} end
    * @returns
    */
-   getPadBehind (end) {
-    const lastIndex = this.getLastIndex()
+  getPadBehind(end) {
+    const lastIndex = this.getLastIndex();
 
     // if (this.isFixedType()) {
     //   return (lastIndex - end) * this.fixedSizeValue
     // }
 
     if (this.lastCalcIndex === lastIndex) {
-      return this.getIndexOffset(lastIndex) - this.getIndexOffset(end)
+      return this.getIndexOffset(lastIndex) - this.getIndexOffset(end);
     } else {
-      return (lastIndex - end) * this.getEstimateSize()
+      return (lastIndex - end) * this.getEstimateSize();
     }
   }
 
@@ -180,13 +181,8 @@ export default class Virtual {
       return 0;
     }
     let offset = 0;
-    // let indexSize = 0;
     for (let index = 0; index < givenIndex; index++) {
-      // indexSize = this.sizes.get(this.param.uniqueIds[index]);
-      // offset =
-      //   offset +
-      //   (typeof indexSize === "number" ? indexSize : this.getEstimateSize());
-      offset = offset +this.getEstimateSize();
+      offset = offset + this.getEstimateSize();
     }
 
     this.lastCalcIndex = Math.max(this.lastCalcIndex, givenIndex - 1);
@@ -195,9 +191,6 @@ export default class Virtual {
   }
   // 获取高度
   getEstimateSize() {
-    // return this.isFixedType()
-    //   ? this.fixedSizeValue
-    //   : this.firstRangeAverageSize || this.param.estimateSize;
     return this.param.estimateSize;
   }
   // 销毁
