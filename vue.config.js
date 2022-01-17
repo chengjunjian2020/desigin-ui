@@ -1,6 +1,7 @@
 const path = require("path"); //引入path模块
 module.exports = {
   assetsDir: "./static",
+  outputDir: "docs",
   publicPath: process.env.NODE_ENV === "production" ? "./" : "/",
   pages: {
     index: {
