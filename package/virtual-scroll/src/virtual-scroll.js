@@ -88,20 +88,19 @@ export default {
         (entries) => {
           entries.forEach((val) => {
             //避免有的时候一渲染页面就会触发，模拟只有滚动时候才发生
-            console.log(this.isFirstObserver)
-            if(this.isFirstObserver){
-              setTimeout(() =>{
+            if (this.isFirstObserver) {
+              setTimeout(() => {
                 this.isFirstObserver = false;
-              },800)
+              }, 800);
               return;
             }
             const attributes = val.target.attributes;
             // isIntersecting标记元素是否进入可视区域
-            if(val.isIntersecting && attributes){
-              if(attributes && attributes['name'] === 'virtual-header'){
+            if (val.isIntersecting && attributes) {
+              if (attributes && attributes["name"] === "virtual-header") {
                 this.$emit("on-header");
               }
-              if(attributes && attributes['name'] === 'virtual-footer'){
+              if (attributes && attributes["name"] === "virtual-footer") {
                 this.$emit("on-footer");
               }
             }
@@ -233,10 +232,10 @@ export default {
           {
             ref: "virtual-header",
             attrs: {
-              name: 'virtual-header'
+              name: "virtual-header",
             },
           },
-          
+
           header()
         ),
         h(
@@ -252,7 +251,7 @@ export default {
           {
             ref: "virtual-footer",
             attrs: {
-              name: 'virtual-footer'
+              name: "virtual-footer",
             },
           },
           footer()

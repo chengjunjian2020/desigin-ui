@@ -19,7 +19,8 @@ module.exports = {
       .loader("babel-loader");
     config.resolve.alias
       .set("desigin-ui", path.resolve("package"))
-      .set("theme-chalk", path.resolve("package/theme-chalk/src"));
+      .set("theme-chalk", path.resolve("package/theme-chalk/src"))
+      .set("@", path.resolve("src"));
     // .set("common", path.resolve("package"))
   },
   // resolve: {

@@ -1,65 +1,29 @@
 <template>
     <div class="wrapper">
-
-<!--        <RotationScroll-->
-<!--            :list="list"-->
-<!--            :itemWidth="100"-->
-<!--            wrapperClass="aa"-->
-<!--            scrollClass="bb"-->
-<!--        >-->
-<!--            <ul>-->
-<!--                <li v-for="item in list" :key="item.id">-->
-<!--                    {{ item }}-->
-<!--                </li>-->
-<!--            </ul>-->
-<!--        </RotationScroll>-->
-      <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="活动名称" prop="name">
-          <el-input v-model="form.name"></el-input>
-        </el-form-item>
-      </el-form>
+        <date-picker v-model="value1" size="small"></date-picker>
+        <Model v-model="value1"></Model>
     </div>
 </template>
 
 <script>
-// import { RotationScroll } from "desigin-ui/index";
+import { datePicker } from "desigin-ui/index";
+import Model from "../components/CustomVModel.vue";
 export default {
     data() {
         return {
-            list: [],
-            form: {
-              name: '',
-            },
-            rules: {
-              name: [
-                { required: true, message: '请输入活动名称', trigger: 'blur' },
-                { min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' }
-              ],
-            }
+            value1: "11",
         };
     },
     components: {
-        // RotationScroll,
+        datePicker,
+        Model,
     },
-
-    created() {
-        this._initList();
-    },
-    methods: {
-        _initList() {
-            for (let i = 0; i < 30; i++) {
-                this.list.push(`自动轮播第${i}条`);
-            }
-        },
-    },
+    methods: {},
 };
 </script>
 
 <style lang="less" scoped>
 .wrapper {
-    width: 300px;
-    height: 222px;
-    overflow: hidden;
     ul {
         // display: flex;
         li {

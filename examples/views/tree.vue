@@ -69,7 +69,6 @@ export default {
             let id = this.id;
             id += 1;
             this.id = id * -1;
-            console.log(this.id);
         }, 1000);
     },
     methods: {

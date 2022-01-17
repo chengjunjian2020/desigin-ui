@@ -3,8 +3,6 @@ import App from "./App.vue";
 import router from "./router";
 import ElementUI from "element-ui";
 import "element-ui/lib/theme-chalk/index.css";
-
-import "intersection-observer";
 import "desigin-ui/theme-chalk/src/index.less";
 Vue.config.productionTip = false;
 Vue.use(ElementUI);
