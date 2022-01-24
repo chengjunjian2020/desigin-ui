@@ -59,17 +59,24 @@
                     </div>
                 </div>
                 <div class="picker-panel__content">
-                    <div class="table-wrapper">
-                        <data-table
-                            :yearRange="yearRange"
-                            :year="year"
-                            :month="month"
-                            :value="value"
-                            :panelType="panelType"
-                            @changeDay="changeDay"
-                        ></data-table>
-                    </div>
-
+                    <data-table
+                        v-show="panelType === 'day'"
+                        :yearRange="yearRange"
+                        :year="year"
+                        :month="month"
+                        :value="value"
+                        :panelType="panelType"
+                        @changeDay="changeDay"
+                    ></data-table>
+                    <data-table
+                        v-show="panelType === 'day'"
+                        :yearRange="yearRange"
+                        :year="year"
+                        :month="month"
+                        :value="value"
+                        :panelType="panelType"
+                        @changeDay="changeDay"
+                    ></data-table>
                     <select-panel
                         v-show="panelType !== 'day'"
                         :yearRange="yearRange"
@@ -87,8 +94,8 @@
 
 <script>
 import dataTable from "./basic/data-table.vue";
+import selectPanel from "./basic/select-panel";
 import { collapseTransition } from "desigin-ui/collapse-transition";
-import selectPanel from "./basic/select-panel.vue";
 export default {
     props: {
         width: {
@@ -119,8 +126,8 @@ export default {
     },
     components: {
         dataTable,
-        collapseTransition,
         selectPanel,
+        collapseTransition,
     },
     created() {
         this.setHandlerDate(new Date());
@@ -130,7 +137,7 @@ export default {
             this.$emit("change", cell);
             const { year, month } = cell;
             this.year = year;
-            this.month = parseInt(month);
+            this.month = month;
         },
         openYearPanel() {
             this.panelType = "year";

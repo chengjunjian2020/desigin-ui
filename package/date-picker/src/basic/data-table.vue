@@ -112,6 +112,8 @@ export default {
             }
         },
         clickDay(cell) {
+            cell.month = cell.month.toString().padStart(2, "0");
+            cell.day = cell.day.toString().padStart(2, "0");
             this.$emit("changeDay", cell);
         },
     },

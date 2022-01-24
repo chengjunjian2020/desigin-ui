@@ -1,4 +1,4 @@
-const transitionStyle = "0.3s height ease-in-out";
+const transitionStyle = "0.2s height ease-in-out";
 const Transition = {
   //这些钩子是vue中transiton标签的一些钩子方法
   beforeEnter(el) {

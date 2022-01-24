@@ -16,9 +16,9 @@
 </template>
 
 <script>
-import dayjs from "dayjs";
 import Vue from "vue";
 import Clickoutside from "@/directive/clickoutside";
+import { checkData } from "@/utils/date-utils";
 export default {
     model: {
         prop: "value", // 对应 props text1
@@ -35,33 +35,33 @@ export default {
         };
     },
     watch: {
-        value() {
-            this.handleBlur();
+        value: {
+            handler() {
+                this.handleBlur();
+            },
+            immediate: true,
         },
+    },
+    mounted() {
+        this.handleBlur();
     },
     methods: {
         handleBlur() {
             const value = this.value;
             let tempIsValid = true;
-            if (!value || value.trim() === "") {
+            if (!value || value.trim() === "" || !checkData(value, "-")) {
                 tempIsValid = false;
             }
-            if (
-                tempIsValid &&
-                (typeof value === "object" ||
-                    !isNaN(Number(value)) ||
-                    typeof value === "string")
-            ) {
-                let _date = dayjs(value).format("YYYY-MM-DD");
-                if (_date === "Invalid Date") {
-                    this.date = "";
-                    return;
-                }
-                this.date = _date;
+            if (tempIsValid) {
+                this.date = value;
             } else {
                 this.date = "";
             }
-            this.picker.value = this.date;
+            this.$nextTick(() => {
+                if (this.picker) {
+                    this.picker.value = this.date;
+                }
+            });
         },
         handleFocus(el) {
             this.showPopper(el);
@@ -75,6 +75,7 @@ export default {
         },
         mountedPanel() {
             this.picker = new Vue(this.panel).$mount();
+            this.handleBlur();
             this.picker.$on("change", (cell) => {
                 const { year, month, day } = cell;
                 this.$emit("change", `${year}-${month}-${day}`);

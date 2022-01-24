@@ -11,7 +11,7 @@ import Model from "../components/CustomVModel.vue";
 export default {
     data() {
         return {
-            value1: "11",
+            value1: "2020-01-01",
         };
     },
     components: {

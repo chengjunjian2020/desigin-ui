@@ -1,8 +1,11 @@
 import DatePanel from "./date-panel.vue";
+import DateRange from "./date-range.vue";
 import picker from "./picker";
 const getPanel = function(type) {
   if (type === "date") {
     return DatePanel;
+  } else if (type === "daterange") {
+    return DateRange;
   }
   return DatePanel;
 };
